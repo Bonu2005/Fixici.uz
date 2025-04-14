@@ -1,0 +1,261 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum userRole {
+  ADMIN
+  SUPER_ADMIN
+  VIEWER_ADMIN
+  USER_FIZ
+  USER_YUR
+}
+
+enum userStatus {
+  PENDING
+  ACTIVE
+  REJECTED
+}
+
+enum orderStatus {
+  PENDING
+  ACTIVE
+  REJECTED
+}
+
+enum paymentType {
+  CREDIT_CARD
+  CASH
+  BANK_TRANSFER
+}
+
+model Region {
+  id      String @id @default(uuid())
+  nameUz  String
+  nameRU  String
+  nameEng String
+  User    User[]
+}
+
+model Brand {
+  id      String  @id @default(uuid())
+  nameUz  String
+  nameRU  String
+  nameEng String
+  Tools   Tools[]
+}
+
+model Capacity {
+  id      String  @id @default(uuid())
+  nameUz  String
+  nameRU  String
+  nameEng String
+  Tools   Tools[]
+}
+
+model Size {
+  id      String  @id @default(uuid())
+  nameUz  String
+  nameRU  String
+  nameEng String
+  Tools   Tools[]
+}
+
+model Level {
+  id         String       @id @default(uuid())
+  nameUz     String
+  nameRU     String
+  nameEng    String
+  Product    Product[]
+  MasterProd MasterProd[]
+}
+
+model User {
+  id          String     @id @default(uuid())
+  fullName    String
+  password    String
+  phoneNumber String
+  regionId    String
+  region      Region     @relation(fields: [regionId], references: [id])
+  IIN         String?
+  MFO         String?
+  RS          String?
+  Bank        String?
+  OKED        String?
+  ADDRESS     String
+  role        userRole
+  status      userStatus
+  Basket      Basket[]
+}
+
+model Tools {
+  id             String       @id @default(uuid())
+  nameUz         String
+  nameRU         String
+  nameEng        String
+  descriptionUz  String
+  descriptionRU  String
+  descriptionEng String
+  price          Int
+  quantity       Int
+  code           Int
+  image          String
+  brandId        String
+  brand          Brand        @relation(fields: [brandId], references: [id])
+  isActive       Boolean
+  capacityId     String
+  capacity       Capacity     @relation(fields: [capacityId], references: [id])
+  sizeId         String
+  size           Size         @relation(fields: [sizeId], references: [id])
+  Product        Product[]
+  MasterProd     MasterProd[]
+}
+
+model Product {
+  id              String       @id @default(uuid())
+  nameUz          String
+  nameRU          String
+  nameEng         String
+  image           String
+  minWorkingHours Int
+  levelId         String
+  level           Level        @relation(fields: [levelId], references: [id])
+  priceHourly     Int
+  priceDaily      Int
+  toolId          String
+  tool            Tools        @relation(fields: [toolId], references: [id])
+  Order           Order[]
+  MasterProd      MasterProd[]
+  Basket          Basket[]
+}
+
+model Master {
+  id            String       @id @default(uuid())
+  fullName      String
+  phone         String
+  isActive      Boolean
+  year          Int
+  image         String
+  passportImage String
+  star          String
+  about         String
+  MasterProd    MasterProd[]
+  Comment       Comment[]
+}
+
+model Order {
+  id                String      @id @default(uuid())
+  productId         String
+  product           Product     @relation(fields: [productId], references: [id])
+  productCount      Int
+  quantity          Int
+  measure           Int
+  tool              Int
+  total             Int
+  location          String
+  address           String
+  date              DateTime
+  paymentType       paymentType
+  withDelivery      Boolean
+  status            orderStatus
+  commentToDelivery String
+  masterId          String
+  userId            String
+}
+
+model MasterProd {
+  id             String  @id @default(uuid())
+  masterId       String
+  master         Master  @relation(fields: [masterId], references: [id])
+  productId      String
+  product        Product @relation(fields: [productId], references: [id])
+  minWorkingHour Int
+  levelId        String
+  level          Level   @relation(fields: [levelId], references: [id])
+  priceHourly    Int
+  priceDaily     Int
+  experience     Int
+  toolId         String
+  tool           Tools   @relation(fields: [toolId], references: [id])
+}
+
+model Comment {
+  id       String @id @default(uuid())
+  star     Int
+  masterId String
+  master   Master @relation(fields: [masterId], references: [id])
+}
+
+model Basket {
+  id                String      @id @default(uuid())
+  productId         String
+  product           Product     @relation(fields: [productId], references: [id])
+  productCount      Int
+  quantity          Int
+  measure           Int
+  tool              Int
+  total             Int
+  location          String
+  address           String
+  date              DateTime
+  paymentType       paymentType
+  withDelivery      Boolean
+  status            orderStatus
+  commentToDelivery String
+  masterId          String
+  userId            String
+  user              User        @relation(fields: [userId], references: [id])
+}
+
+model GeneralInfo {
+  id    String @id @default(uuid())
+  email String
+  links String
+  phone String
+}
+
+model Contact {
+  id      String @id @default(uuid())
+  name    String
+  surName String
+  phone   String
+  address String
+  message String
+}
+
+model FAQ {
+  id       String @id @default(uuid())
+  question String
+  answer   String
+}
+
+model showCase {
+  id             String @id @default(uuid())
+  nameUz         String
+  nameRU         String
+  nameEng        String
+  descriptionUz  String
+  descriptionRU  String
+  descriptionEng String
+  image          String
+  link           String
+}
+
+model Partners {
+  id      String @id @default(uuid())
+  nameUz  String
+  nameRU  String
+  nameEng String
+  image   String
+}
