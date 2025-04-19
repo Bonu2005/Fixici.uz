@@ -145,13 +145,6 @@ exports.Prisma.SizeScalarFieldEnum = {
   nameEng: 'nameEng'
 };
 
-exports.Prisma.LevelScalarFieldEnum = {
-  id: 'id',
-  nameUz: 'nameUz',
-  nameRU: 'nameRU',
-  nameEng: 'nameEng'
-};
-
 exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
   fullName: 'fullName',
@@ -186,19 +179,6 @@ exports.Prisma.ToolsScalarFieldEnum = {
   sizeId: 'sizeId'
 };
 
-exports.Prisma.ProductScalarFieldEnum = {
-  id: 'id',
-  nameUz: 'nameUz',
-  nameRU: 'nameRU',
-  nameEng: 'nameEng',
-  image: 'image',
-  minWorkingHours: 'minWorkingHours',
-  levelId: 'levelId',
-  priceHourly: 'priceHourly',
-  priceDaily: 'priceDaily',
-  toolId: 'toolId'
-};
-
 exports.Prisma.MasterScalarFieldEnum = {
   id: 'id',
   fullName: 'fullName',
@@ -207,27 +187,7 @@ exports.Prisma.MasterScalarFieldEnum = {
   year: 'year',
   image: 'image',
   passportImage: 'passportImage',
-  star: 'star',
   about: 'about'
-};
-
-exports.Prisma.OrderScalarFieldEnum = {
-  id: 'id',
-  productId: 'productId',
-  productCount: 'productCount',
-  quantity: 'quantity',
-  measure: 'measure',
-  tool: 'tool',
-  total: 'total',
-  location: 'location',
-  address: 'address',
-  date: 'date',
-  paymentType: 'paymentType',
-  withDelivery: 'withDelivery',
-  status: 'status',
-  commentToDelivery: 'commentToDelivery',
-  masterId: 'masterId',
-  userId: 'userId'
 };
 
 exports.Prisma.MasterProdScalarFieldEnum = {
@@ -241,15 +201,39 @@ exports.Prisma.MasterProdScalarFieldEnum = {
   experience: 'experience'
 };
 
-exports.Prisma.CommentScalarFieldEnum = {
+exports.Prisma.ProductScalarFieldEnum = {
   id: 'id',
-  star: 'star',
-  masterId: 'masterId'
+  nameUz: 'nameUz',
+  nameRU: 'nameRU',
+  nameEng: 'nameEng',
+  image: 'image',
+  isActive: 'isActive'
 };
 
-exports.Prisma.BasketScalarFieldEnum = {
+exports.Prisma.LevelScalarFieldEnum = {
   id: 'id',
+  nameUz: 'nameUz',
+  nameRU: 'nameRU',
+  nameEng: 'nameEng'
+};
+
+exports.Prisma.ProductLevelsScalarFieldEnum = {
+  id: 'id',
+  levelId: 'levelId',
   productId: 'productId',
+  priceHourly: 'priceHourly',
+  priceDaily: 'priceDaily',
+  minWorkingHour: 'minWorkingHour'
+};
+
+exports.Prisma.ProductToolsScalarFieldEnum = {
+  id: 'id',
+  toolId: 'toolId',
+  productId: 'productId'
+};
+
+exports.Prisma.OrderScalarFieldEnum = {
+  id: 'id',
   productCount: 'productCount',
   quantity: 'quantity',
   measure: 'measure',
@@ -262,8 +246,52 @@ exports.Prisma.BasketScalarFieldEnum = {
   withDelivery: 'withDelivery',
   status: 'status',
   commentToDelivery: 'commentToDelivery',
-  masterId: 'masterId',
   userId: 'userId'
+};
+
+exports.Prisma.OrderProductsScalarFieldEnum = {
+  id: 'id',
+  orderId: 'orderId',
+  productId: 'productId',
+  levelId: 'levelId',
+  toolId: 'toolId',
+  count: 'count',
+  price: 'price',
+  workingTime: 'workingTime',
+  timeUnit: 'timeUnit'
+};
+
+exports.Prisma.OrderMastersScalarFieldEnum = {
+  id: 'id',
+  orderId: 'orderId',
+  masterId: 'masterId'
+};
+
+exports.Prisma.CommentScalarFieldEnum = {
+  id: 'id',
+  text: 'text',
+  userId: 'userId',
+  orderId: 'orderId'
+};
+
+exports.Prisma.MasterRatingsScalarFieldEnum = {
+  id: 'id',
+  star: 'star',
+  masterId: 'masterId',
+  commentId: 'commentId'
+};
+
+exports.Prisma.BasketScalarFieldEnum = {
+  id: 'id',
+  productId: 'productId',
+  productCount: 'productCount',
+  quantity: 'quantity',
+  measure: 'measure',
+  toolId: 'toolId',
+  total: 'total',
+  userId: 'userId',
+  timeUnit: 'timeUnit',
+  levelId: 'levelId'
 };
 
 exports.Prisma.GeneralInfoScalarFieldEnum = {
@@ -308,6 +336,12 @@ exports.Prisma.PartnersScalarFieldEnum = {
   image: 'image'
 };
 
+exports.Prisma.SessionScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  ipAddress: 'ipAddress'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -348,25 +382,36 @@ exports.orderStatus = exports.$Enums.orderStatus = {
   REJECTED: 'REJECTED'
 };
 
+exports.MasterDaily = exports.$Enums.MasterDaily = {
+  Daily: 'Daily',
+  Hoursly: 'Hoursly'
+};
+
 exports.Prisma.ModelName = {
   Region: 'Region',
   Brand: 'Brand',
   Capacity: 'Capacity',
   Size: 'Size',
-  Level: 'Level',
   User: 'User',
   Tools: 'Tools',
-  Product: 'Product',
   Master: 'Master',
-  Order: 'Order',
   MasterProd: 'MasterProd',
+  Product: 'Product',
+  Level: 'Level',
+  ProductLevels: 'ProductLevels',
+  ProductTools: 'ProductTools',
+  Order: 'Order',
+  OrderProducts: 'OrderProducts',
+  OrderMasters: 'OrderMasters',
   Comment: 'Comment',
+  MasterRatings: 'MasterRatings',
   Basket: 'Basket',
   GeneralInfo: 'GeneralInfo',
   Contact: 'Contact',
   FAQ: 'FAQ',
   showCase: 'showCase',
-  Partners: 'Partners'
+  Partners: 'Partners',
+  Session: 'Session'
 };
 
 /**

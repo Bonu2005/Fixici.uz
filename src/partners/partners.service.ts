@@ -16,9 +16,15 @@ async create(createPartnerDto: CreatePartnerDto) {
   }
 
 
-  async findAll() {
+  async findAll(page:number,limit:number,search:string) {
     try {
-      let find = await this.prisma.partners.findMany()
+      let skip = (page-1)*limit
+      let find = await this.prisma.partners.findMany({where:{OR:[{
+        nameUz:{startsWith:search,mode:"insensitive"},
+        nameRU:{startsWith:search,mode:"insensitive"},
+        nameEng:{startsWith:search,mode:"insensitive"},
+      }]},
+    skip,take:limit})
       return find
     } catch (error) {
       throw new InternalServerErrorException()

@@ -1,5 +1,21 @@
+import { ApiProperty } from '@nestjs/swagger';
+
 export class CreateSizeDto {
-    nameUz  :string
-    nameRU  :string
-    nameEng :string
+    @ApiProperty({
+        description: 'Название размера на узбекском языке',
+        example: 'Маленький',
+    })
+    nameUz: string;
+
+    @ApiProperty({
+        description: 'Название размера на русском языке',
+        example: 'Маленький',
+    })
+    nameRU: string;
+
+    @ApiProperty({
+        description: 'Название размера на английском языке',
+        example: 'Small',
+    })
+    nameEng: string;
 }

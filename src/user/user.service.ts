@@ -1,26 +1,55 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { Prisma } from 'generated/prisma';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class UserService {
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+  constructor(private prisma:PrismaService){}
+ async findAll(page:number,limit:number,search:string) {
+    try {
+      let skip = (page-1)*limit
+      let find = await this.prisma.user.findMany({
+        where:{
+          OR:[{
+            fullName:{startsWith:search,mode:"insensitive"},
+            phoneNumber:{startsWith:search,mode:"insensitive"},
+            Bank:{startsWith:search,mode:"insensitive"},
+            ADDRESS:{startsWith:search,mode:"insensitive"},
+          }]
+        },
+        skip,
+        take:limit
+      })
+      return find
+    } catch (error) {
+      throw new InternalServerErrorException()
+    }
   }
 
-  findAll() {
-    return `This action returns all user`;
+ async findOne(id: string) {
+    try {
+      let find = await this.prisma.user.findUnique({where:{id}})
+      if(!find){
+        return {message:"No data with this id "}
+      }
+      return find
+    } catch (error) {
+       throw new InternalServerErrorException()
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
-  }
-
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+async  update(id: string, updateUserDto: UpdateUserDto) {
+   try {
+    let {password} = updateUserDto
+    if(password){
+      return {message:"You cant change password please reset it"}
+    }
+    let updated = await this.prisma.user.update({where:{id},data:updateUserDto})
+    return updated
+   } catch (error) {
+    throw new InternalServerErrorException()
+   }
   }
 }

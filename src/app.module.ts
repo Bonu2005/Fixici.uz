@@ -12,7 +12,6 @@ import { ToolsModule } from './tools/tools.module';
 import { ProductModule } from './product/product.module';
 import { MasterModule } from './master/master.module';
 import { OrderModule } from './order/order.module';
-import { MasterProdModule } from './master-prod/master-prod.module';
 import { CommentModule } from './comment/comment.module';
 import { BasketModule } from './basket/basket.module';
 import { GeneralInfoModule } from './general-info/general-info.module';
@@ -23,10 +22,15 @@ import { PartnersModule } from './partners/partners.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { EskizModule } from './eskiz/eskiz.module';
 import { JwtModule } from '@nestjs/jwt';
+import { UploadsModule } from './uploads/uploads.module';
+import { join } from 'path';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { ConfigService } from '@nestjs/config';
 
 @Module({
-  imports: [AuthModule, RegionModule, BrandModule, CapacityModule, SizeModule, LevelModule, UserModule, ToolsModule, ProductModule, MasterModule, OrderModule, MasterProdModule, CommentModule, BasketModule, GeneralInfoModule, ContactModule, FaqModule, ShowcaseModule, PartnersModule, PrismaModule, EskizModule,JwtModule.register({})],
+  imports: [AuthModule, RegionModule, BrandModule, CapacityModule, SizeModule, LevelModule, UserModule, ToolsModule, ProductModule, MasterModule, OrderModule, CommentModule, BasketModule, GeneralInfoModule, ContactModule, FaqModule, ShowcaseModule, PartnersModule, PrismaModule, EskizModule, UploadsModule,ServeStaticModule.forRoot({rootPath:join(__dirname,"..","uploads"),serveRoot:'/file'})],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, ConfigService],
+  exports:[ ConfigService]
 })
 export class AppModule {}
