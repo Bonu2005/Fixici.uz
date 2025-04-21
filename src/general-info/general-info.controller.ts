@@ -1,8 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { GeneralInfoService } from './general-info.service';
 import { CreateGeneralInfoDto } from './dto/create-general-info.dto';
 import { UpdateGeneralInfoDto } from './dto/update-general-info.dto';
-import { ApiOperation, ApiBody, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiBody, ApiTags, ApiBearerAuth } from '@nestjs/swagger';
+import { RoleGuard } from 'src/guard/role.guard';
+import { Role } from 'src/decorators/role.guard';
+import { GuardGuard } from 'src/guard/guard.guard';
 
 @ApiTags('General Information')
 @Controller('general-info')
@@ -10,6 +13,10 @@ export class GeneralInfoController {
   constructor(private readonly generalInfoService: GeneralInfoService) {}
 
   @Post()
+  @UseGuards(RoleGuard)
+  @Role("ADMIN")
+  @UseGuards(GuardGuard)
+  @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'Create general information' })
   @ApiBody({
     schema: {
@@ -39,6 +46,10 @@ export class GeneralInfoController {
   }
 
   @Patch(':id')
+  @UseGuards(RoleGuard)
+  @Role("ADMIN","SUPER_ADMIN")
+  @UseGuards(GuardGuard)
+  @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'Update general information by ID' })
   @ApiBody({
     schema: {
@@ -56,6 +67,10 @@ export class GeneralInfoController {
   }
 
   @Delete(':id')
+  @UseGuards(RoleGuard)
+  @Role("ADMIN")
+  @UseGuards(GuardGuard)
+  @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'Delete general information by ID' })
   remove(@Param('id') id: string) {
     return this.generalInfoService.remove(id);

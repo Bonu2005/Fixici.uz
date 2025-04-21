@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Prisma } from 'generated/prisma';
@@ -24,7 +24,7 @@ export class UserService {
       })
       return find
     } catch (error) {
-      throw new InternalServerErrorException()
+      throw new BadRequestException(error)
     }
   }
 
@@ -36,7 +36,7 @@ export class UserService {
       }
       return find
     } catch (error) {
-       throw new InternalServerErrorException()
+       throw new BadRequestException(error)
     }
   }
 
@@ -49,7 +49,7 @@ async  update(id: string, updateUserDto: UpdateUserDto) {
     let updated = await this.prisma.user.update({where:{id},data:updateUserDto})
     return updated
    } catch (error) {
-    throw new InternalServerErrorException()
+    throw new BadRequestException(error)
    }
   }
 }

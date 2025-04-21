@@ -1,8 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards } from '@nestjs/common';
 import { RegionService } from './region.service';
 import { CreateRegionDto } from './dto/create-region.dto';
 import { UpdateRegionDto } from './dto/update-region.dto';
-import { ApiOperation, ApiTags, ApiBody, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger';
+import { ApiOperation, ApiTags, ApiBody, ApiParam, ApiQuery, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { RoleGuard } from 'src/guard/role.guard';
+import { Role } from 'src/decorators/role.guard';
+import { GuardGuard } from 'src/guard/guard.guard';
 
 @ApiTags('Regions')
 @Controller('region')
@@ -10,6 +13,10 @@ export class RegionController {
   constructor(private readonly regionService: RegionService) { }
 
   @Post()
+  @UseGuards(RoleGuard)
+  @Role("ADMIN")
+  @UseGuards(GuardGuard)
+  @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'Create a new region' })
   @ApiBody({type:CreateRegionDto})
   create(@Body() createRegionDto: CreateRegionDto) {
@@ -20,7 +27,7 @@ export class RegionController {
   @ApiOperation({ summary: 'Get all region with pagination and search' })
   @ApiQuery({ name: 'page', required: false, type: Number, example: 1 })
   @ApiQuery({ name: 'limit', required: false, type: Number, example: 10 })
-  @ApiQuery({ name: 'search', required: false, type: String, example: 'Samsung' })
+  @ApiQuery({ name: 'search', required: false, type: String, example: '' })
   @ApiResponse({ status: 200, description: 'List of region returned successfully' })
   @ApiResponse({ status: 500, description: 'Internal server error' })
   findAll(@Query() query: { page: string, limit: string, search: string }) {
@@ -38,6 +45,10 @@ export class RegionController {
   }
 
   @Patch(':id')
+  @UseGuards(RoleGuard)
+  @Role("ADMIN","SUPER_ADMIN")
+  @UseGuards(GuardGuard)
+  @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'Update region by ID' })
   @ApiBody({
     schema: {
@@ -54,6 +65,10 @@ export class RegionController {
   }
 
   @Delete(':id')
+  @UseGuards(RoleGuard)
+  @Role("ADMIN")
+  @UseGuards(GuardGuard)
+  @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'Delete region by ID' })
   @ApiParam({ name: 'id', type: 'string', description: 'Region ID' })
   remove(@Param('id') id: string) {

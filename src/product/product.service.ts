@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreateProductDto, } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -38,7 +38,7 @@ export class ProductService {
       return created
     } catch (error) {
       console.log(error);
-      throw new InternalServerErrorException()
+      throw new BadRequestException(error)
     }
   }
 
@@ -63,7 +63,7 @@ export class ProductService {
     } catch (error) {
       console.log(error);
 
-      throw new InternalServerErrorException()
+      throw new BadRequestException(error)
     }
   }
 
@@ -74,7 +74,7 @@ export class ProductService {
         return { message: "No data found with this id" }
       }
     } catch (error) {
-      throw new InternalServerErrorException()
+      throw new BadRequestException(error)
     }
   }
 
@@ -87,7 +87,7 @@ export class ProductService {
       let updated = await this.prisma.product.update({ where: { id }, data: updateProductDto })
       return updated
     } catch (error) {
-      throw new InternalServerErrorException()
+      throw new BadRequestException(error)
     }
   }
 
@@ -100,7 +100,7 @@ export class ProductService {
       let updated = await this.prisma.product.delete({ where: { id } })
       return updated
     } catch (error) {
-      throw new InternalServerErrorException()
+      throw new BadRequestException(error)
     }
   }
 }

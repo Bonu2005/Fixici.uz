@@ -4,6 +4,7 @@ import {
   Post,
   Body,
   Req,
+  UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Request } from 'express';
@@ -11,8 +12,13 @@ import {
   ApiTags,
   ApiOperation,
   ApiBody,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
-import { CreateAuthDto, LoginAuthDto } from './dto/create-auth.dto';
+import { AdminAuthDto, CreateAuthDto, LoginAuthDto } from './dto/create-auth.dto';
+import { GuardGuard } from 'src/guard/guard.guard';
+import { RoleGuard } from 'src/guard/role.guard';
+import { Role } from 'src/decorators/role.guard';
+
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -26,6 +32,17 @@ export class AuthController {
     return this.authService.register(body);
   }
   
+  
+  @Post('registerAdmin')
+  @UseGuards(RoleGuard)
+  @Role("ADMIN")
+  @UseGuards(GuardGuard)
+  @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: 'Register a new Admin' })
+  @ApiBody({type:AdminAuthDto})
+  registerAdmin(@Body() body: any) {
+    return this.authService.registerAdmin(body);
+  }
 
 
 @Post('login')
@@ -74,6 +91,32 @@ login(@Body() loginAuthDto: any, @Req() req: Request) {
   sendOtpReset(@Req() req: Request) {
     return this.authService.sendOtpReset(req);
   }
+  
+
+  @Get('me')
+  @UseGuards(GuardGuard)
+  @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: 'Get me' })
+  me(@Req() req: Request) {
+    return this.authService.me(req);  
+  }
+
+  @Get('myOrders')
+  @UseGuards(GuardGuard)
+  @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: 'Get myOrders' })
+  myOrders(@Req() req: Request) {
+    return this.authService.myOrders(req);  
+  }
+  
+  @Get('myBasket')
+  @UseGuards(GuardGuard)
+  @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: 'Get myBasket' })
+  myBasket(@Req() req: Request) {
+    return this.authService.myBasket(req);  
+  }
+
 
   @Post('verify-reset')
   @ApiOperation({ summary: 'Verify OTP for password reset' })

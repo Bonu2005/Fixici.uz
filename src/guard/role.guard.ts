@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { RoleKey } from 'src/decorators/role.guard';
 
 @Injectable()
-export class GuardGuard implements CanActivate {
+export class RoleGuard implements CanActivate {
   constructor(private reflector:Reflector){}
   canActivate(
     context: ExecutionContext,
@@ -16,7 +16,7 @@ export class GuardGuard implements CanActivate {
    }
    try {
     let {user}= context.switchToHttp().getRequest()
-    return required.some((roles:userRole)=>user.role(roles))
+    return required.includes(user.role);
    } catch (error) {
     throw new UnauthorizedException()
    }

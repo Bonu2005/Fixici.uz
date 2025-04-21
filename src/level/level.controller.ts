@@ -1,8 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards } from '@nestjs/common';
 import { LevelService } from './level.service';
 import { CreateLevelDto } from './dto/create-level.dto';
 import { UpdateLevelDto } from './dto/update-level.dto';
-import { ApiOperation, ApiBody, ApiTags, ApiQuery, ApiResponse } from '@nestjs/swagger';
+import { ApiOperation, ApiBody, ApiTags, ApiQuery, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { RoleGuard } from 'src/guard/role.guard';
+import { Role } from 'src/decorators/role.guard';
+import { GuardGuard } from 'src/guard/guard.guard';
 
 @ApiTags('Level')
 @Controller('level')
@@ -10,6 +13,10 @@ export class LevelController {
   constructor(private readonly levelService: LevelService) {}
 
   @Post()
+  @UseGuards(RoleGuard)
+  @Role("ADMIN")
+  @UseGuards(GuardGuard)
+  @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'Create a new level' })
   @ApiBody({type:CreateLevelDto})
   create(@Body() createLevelDto: CreateLevelDto) {
@@ -39,6 +46,10 @@ export class LevelController {
   }
 
   @Patch(':id')
+  @UseGuards(RoleGuard)
+  @Role("ADMIN","SUPER_ADMIN")
+  @UseGuards(GuardGuard)
+  @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'Update a level by ID' })
   @ApiBody({
     schema: {
@@ -56,6 +67,10 @@ export class LevelController {
   }
 
   @Delete(':id')
+  @UseGuards(RoleGuard)
+  @Role("ADMIN")
+  @UseGuards(GuardGuard)
+  @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'Delete level by ID' })
   remove(@Param('id') id: string) {
     return this.levelService.remove(id);

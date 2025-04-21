@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -27,7 +27,7 @@ export class CommentService {
       } catch (error) {
         console.log(error);
         
-       throw new InternalServerErrorException()
+       throw new BadRequestException(error)
       }
   }
 
@@ -36,7 +36,7 @@ export class CommentService {
     let find = await this.prisma.comment.findMany()
     return find
   } catch (error) {
-    throw new InternalServerErrorException()
+    throw new BadRequestException(error)
   }
   }
 
@@ -47,7 +47,7 @@ export class CommentService {
      return {message:"No data found with this id"}
     }
   } catch (error) {
-   throw new InternalServerErrorException()
+   throw new BadRequestException(error)
   }
   }
 
@@ -60,7 +60,7 @@ export class CommentService {
     let updated = await this.prisma.comment.update({where:{id},data:updateCommentDto})
     return updated
   } catch (error) {
-   throw new InternalServerErrorException()
+   throw new BadRequestException(error)
   }
   }
 
@@ -73,7 +73,7 @@ export class CommentService {
     let updated = await this.prisma.comment.delete({where:{id}})
     return updated
   } catch (error) {
-   throw new InternalServerErrorException()
+   throw new BadRequestException(error)
   }
   }
 }

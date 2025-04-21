@@ -76,11 +76,11 @@ export class CreateAuthDto {
     })
     role: userRole;
 
-    @ApiProperty({
-        description: 'Статус пользователя',
-        enum: userStatus, // Перечисление userStatus из Prisma
-        example: 'active', // Пример для значения статуса
-    })
+    // @ApiProperty({
+    //     description: 'Статус пользователя',
+    //     enum: userStatus, // Перечисление userStatus из Prisma
+    //     example: 'active', // Пример для значения статуса
+    // })
     status: userStatus;
 }
 
@@ -98,3 +98,49 @@ export class LoginAuthDto {
     password: string;
 }
 
+export class AdminAuthDto{
+    @ApiProperty({
+        description: 'Полное имя пользователя',
+        example: 'Иван Иванов',
+    })
+    fullName: string;
+
+    @ApiProperty({
+        description: 'Пароль пользователя',
+        example: 'password123',
+    })
+    password: string;
+
+    @ApiProperty({
+        description: 'Номер телефона пользователя',
+        example: '+998901234567',
+    })
+    @IsPhoneNumber()
+    phoneNumber: string;
+
+    @ApiProperty({
+        description: 'ID региона пользователя',
+        example: 'region123',
+    })
+    regionId: string;
+
+    @ApiProperty({
+        description: 'Адрес пользователя',
+        example: 'г. Ташкент, ул. Абдуллаева, д. 10',
+    })
+    ADDRESS: string;
+
+    @ApiProperty({
+        description: 'Роль пользователя',
+        enum: userRole, // Перечисление userRole из Prisma
+        example: 'ADMIN', // Пример для значения роли
+    })
+    role: userRole;
+
+    // @ApiProperty({
+    //     description: 'Статус пользователя',
+    //     enum: userStatus, // Перечисление userStatus из Prisma
+    //     example: 'active', // Пример для значения статуса
+    // })
+    status: userStatus;
+}

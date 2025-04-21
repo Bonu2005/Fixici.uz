@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreateRegionDto } from './dto/create-region.dto';
 import { UpdateRegionDto } from './dto/update-region.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -11,7 +11,7 @@ export class RegionService {
       let created = await this.prisma.region.create({ data: createRegionDto })
       return created
     } catch (error) {
-      throw new InternalServerErrorException()
+      throw new BadRequestException(error)
     }
   }
   async findAll(page: number, limit: number, search: string) {
@@ -30,7 +30,7 @@ export class RegionService {
       })
       return find
     } catch (error) {
-      throw new InternalServerErrorException()
+      throw new BadRequestException(error)
     }
   }
 
@@ -41,7 +41,7 @@ export class RegionService {
         return { message: "No data found with this id" }
       }
     } catch (error) {
-      throw new InternalServerErrorException()
+      throw new BadRequestException(error)
     }
   }
 
@@ -54,7 +54,7 @@ export class RegionService {
       let updated = await this.prisma.region.update({ where: { id }, data: updateRegionDto })
       return updated
     } catch (error) {
-      throw new InternalServerErrorException()
+      throw new BadRequestException(error)
     }
   }
 
@@ -67,7 +67,7 @@ export class RegionService {
       let updated = await this.prisma.region.delete({ where: { id } })
       return updated
     } catch (error) {
-      throw new InternalServerErrorException()
+      throw new BadRequestException(error)
     }
   }
 }

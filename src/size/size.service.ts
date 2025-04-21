@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreateSizeDto } from './dto/create-size.dto';
 import { UpdateSizeDto } from './dto/update-size.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -11,7 +11,7 @@ export class SizeService {
       let created = await this.prisma.size.create({ data: createSizeDto })
       return created
     } catch (error) {
-      throw new InternalServerErrorException()
+      throw new BadRequestException(error)
     }
   }
 
@@ -30,7 +30,7 @@ export class SizeService {
       })
       return find
     } catch (error) {
-      throw new InternalServerErrorException()
+      throw new BadRequestException(error)
     }
   }
 
@@ -41,7 +41,7 @@ export class SizeService {
         return { message: "No data found with this id" }
       }
     } catch (error) {
-      throw new InternalServerErrorException()
+      throw new BadRequestException(error)
     }
   }
 
@@ -54,7 +54,7 @@ export class SizeService {
       let updated = await this.prisma.size.update({ where: { id }, data: updateSizeDto })
       return updated
     } catch (error) {
-      throw new InternalServerErrorException()
+      throw new BadRequestException(error)
     }
   }
 
@@ -67,7 +67,7 @@ export class SizeService {
       let updated = await this.prisma.size.delete({ where: { id } })
       return updated
     } catch (error) {
-      throw new InternalServerErrorException()
+      throw new BadRequestException(error)
     }
   }
 }

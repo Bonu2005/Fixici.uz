@@ -1,8 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards } from '@nestjs/common';
 import { SizeService } from './size.service';
 import { CreateSizeDto } from './dto/create-size.dto';
 import { UpdateSizeDto } from './dto/update-size.dto';
-import { ApiOperation, ApiTags, ApiBody, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger';
+import { ApiOperation, ApiTags, ApiBody, ApiParam, ApiQuery, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { RoleGuard } from 'src/guard/role.guard';
+import { Role } from 'src/decorators/role.guard';
+import { GuardGuard } from 'src/guard/guard.guard';
 
 @ApiTags('Sizes')
 @Controller('size')
@@ -10,6 +13,10 @@ export class SizeController {
   constructor(private readonly sizeService: SizeService) { }
 
   @Post()
+  @UseGuards(RoleGuard)
+  @Role("ADMIN")
+  @UseGuards(GuardGuard)
+  @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'Create a new size' })
   @ApiBody({type:CreateSizeDto})
   create(@Body() createSizeDto: CreateSizeDto) {
@@ -38,6 +45,10 @@ export class SizeController {
   }
 
   @Patch(':id')
+  @UseGuards(RoleGuard)
+  @Role("ADMIN","SUPER_ADMIN")
+  @UseGuards(GuardGuard)
+  @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'Update size by ID' })
   @ApiBody({
     schema: {
@@ -54,6 +65,10 @@ export class SizeController {
   }
 
   @Delete(':id')
+  @UseGuards(RoleGuard)
+  @Role("ADMIN")
+  @UseGuards(GuardGuard)
+  @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'Delete size by ID' })
   @ApiParam({ name: 'id', type: 'string', description: 'Size ID' })
   remove(@Param('id') id: string) {

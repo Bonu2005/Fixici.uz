@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreateBasketDto } from './dto/create-basket.dto';
 import { UpdateBasketDto } from './dto/update-basket.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -13,7 +13,7 @@ export class BasketService {
        let created = await this.prisma.basket.create({data:{...createBasketDto,userId:id}})
        return created
       } catch (error) {
-       throw new InternalServerErrorException()
+       throw new BadRequestException(error)
       }
   }
 
@@ -22,7 +22,7 @@ export class BasketService {
       let find = await this.prisma.basket.findMany()
       return find
     } catch (error) {
-      throw new InternalServerErrorException()
+      throw new BadRequestException(error)
     }
   }
 
@@ -33,7 +33,7 @@ export class BasketService {
        return {message:"No data found with this id"}
       }
     } catch (error) {
-     throw new InternalServerErrorException()
+     throw new BadRequestException(error)
     }
   }
 
@@ -46,7 +46,7 @@ export class BasketService {
       let updated = await this.prisma.basket.update({where:{id},data:updateBasketDto})
       return updated
     } catch (error) {
-     throw new InternalServerErrorException()
+     throw new BadRequestException(error)
     }
   }
 
@@ -59,7 +59,7 @@ export class BasketService {
       let updated = await this.prisma.basket.delete({where:{id}})
       return updated
     } catch (error) {
-     throw new InternalServerErrorException()
+     throw new BadRequestException(error)
     }
   }
 }

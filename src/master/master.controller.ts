@@ -1,8 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards } from '@nestjs/common';
 import { MasterService } from './master.service';
 import { CreateMasterDto, MasterFilterDto } from './dto/create-master.dto';
 import { UpdateMasterDto } from './dto/update-master.dto';
-import { ApiOperation, ApiBody, ApiTags, ApiQuery } from '@nestjs/swagger';
+import { ApiOperation, ApiBody, ApiTags, ApiQuery, ApiBearerAuth } from '@nestjs/swagger';
+import { RoleGuard } from 'src/guard/role.guard';
+import { GuardGuard } from 'src/guard/guard.guard';
+import { Role } from 'src/decorators/role.guard';
 
 @ApiTags('Master')
 @Controller('master')
@@ -10,6 +13,10 @@ export class MasterController {
   constructor(private readonly masterService: MasterService) {}
 
   @Post()
+  @UseGuards(RoleGuard)
+  @Role("ADMIN")
+  @UseGuards(GuardGuard)
+   @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'Create a new master' })
   @ApiBody({type:CreateMasterDto})
   create(@Body() createMasterDto: CreateMasterDto) {
@@ -17,27 +24,46 @@ export class MasterController {
   }
 
   @Get()
+  @UseGuards(RoleGuard)
+  @Role("ADMIN","VIEWER_ADMIN")
+  @UseGuards(GuardGuard)
+  @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'Get all masters' })
   @ApiQuery({ name: 'page', required: false, type: Number, example: 1 })
+  @ApiQuery({ name: 'orderBy', required: false, enum: ['ASC', 'DESC'] })
   @ApiQuery({ name: 'limit', required: false, type: Number, example: 10 })
-  @ApiQuery({ name: 'search', required: false, type: String, example: 'John' })
-  @ApiQuery({ name: 'year', required: false, type: Number, example: 2023 })
-  @ApiQuery({ name: 'isActive', required: false, type: Boolean, example: true })
-  findAll(@Query() query:{page:string,limit:string,search:string,filter:MasterFilterDto}) {
-    let page = Number(query.page)||1
-    let limit = Number(query.limit)||10
-    let search = query.search||""
-    let filter = query.filter||undefined
-    return this.masterService.findAll(page,limit,search,filter);
+  @ApiQuery({ name: 'search', required: false, type: String, example: '' })
+  @ApiQuery({ name: 'maxYear', required: false, type: Number, example:""  })
+  @ApiQuery({ name: 'minYear', required: false, type: Number, example: "" })
+  @ApiQuery({ name: 'year', required: false, type: Number, example: "" })
+  @ApiQuery({ name: 'fullName', required: false, type: String, example: "" })
+  @ApiQuery({ name: 'isActive', required: false, enum: ['true', 'false'] })
+  findAll(@Query() filter:MasterFilterDto) {
+    let page = Number(filter.page)||1
+    let limit= Number(filter.limit)||10
+    let search =filter.search||""
+    let minYear =Number(filter.minYear)
+    let maxYear =Number(filter.maxYear)
+    let year =Number(filter.year)
+    let fullName = filter.fullName
+    return this.masterService.findAll(page,limit,search,minYear,maxYear,year,fullName,filter.isActive);
   }
 
   @Get(':id')
+  @UseGuards(RoleGuard)
+  @Role("ADMIN","VIEWER_ADMIN")
+  @UseGuards(GuardGuard)
+  @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'Get master by ID' })
   findOne(@Param('id') id: string) {
     return this.masterService.findOne(id);
   }
 
   @Patch(':id')
+  @UseGuards(RoleGuard)
+  @Role("ADMIN","SUPER_ADMIN")
+  @UseGuards(GuardGuard)
+  @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'Update a master by ID' })
   @ApiBody({
     schema: {
@@ -49,7 +75,7 @@ export class MasterController {
         year: { type: 'number', example: 2023 },
         image: { type: 'string', example: 'url_to_updated_image' },
         passportImage: { type: 'string', example: 'url_to_updated_passport_image' },
-        star: { type: 'string', example: '⭐⭐⭐⭐⭐' },
+        star: { type: 'number', example: 5 },
         about: { type: 'string', example: 'Updated description of technician.' },
       },
       required: [],
@@ -60,6 +86,10 @@ export class MasterController {
   }
 
   @Delete(':id')
+  @UseGuards(RoleGuard)
+  @Role("ADMIN")
+  @UseGuards(GuardGuard)
+  @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'Delete a master by ID' })
   remove(@Param('id') id: string) {
     return this.masterService.remove(id);

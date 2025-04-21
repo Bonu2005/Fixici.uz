@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreateLevelDto } from './dto/create-level.dto';
 import { UpdateLevelDto } from './dto/update-level.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -11,7 +11,7 @@ export class LevelService {
       let created = await this.prisma.level.create({ data: createLevelDto })
       return created
     } catch (error) {
-      throw new InternalServerErrorException()
+      throw new BadRequestException(error)
     }
   }
 
@@ -33,7 +33,7 @@ export class LevelService {
       )
       return find
     } catch (error) {
-      throw new InternalServerErrorException()
+      throw new BadRequestException(error)
     }
   }
 
@@ -45,7 +45,7 @@ export class LevelService {
         return { message: "No data found with this id" }
       }
     } catch (error) {
-      throw new InternalServerErrorException()
+      throw new BadRequestException(error)
     }
   }
 
@@ -58,7 +58,7 @@ export class LevelService {
       let updated = await this.prisma.level.update({ where: { id }, data: updateLevelDto })
       return updated
     } catch (error) {
-      throw new InternalServerErrorException()
+      throw new BadRequestException(error)
     }
   }
 
@@ -71,7 +71,7 @@ export class LevelService {
       let updated = await this.prisma.level.delete({ where: { id } })
       return updated
     } catch (error) {
-      throw new InternalServerErrorException()
+      throw new BadRequestException(error)
     }
   }
 }

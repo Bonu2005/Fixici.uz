@@ -1,9 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards } from '@nestjs/common';
 import { ToolsService } from './tools.service';
 import { CreateToolDto, ToolFilterDto } from './dto/create-tool.dto';
 import { UpdateToolDto } from './dto/update-tool.dto';
-import { ApiOperation, ApiTags, ApiBody, ApiParam, ApiQuery } from '@nestjs/swagger';
+import { ApiOperation, ApiTags, ApiBody, ApiParam, ApiQuery, ApiBearerAuth } from '@nestjs/swagger';
 import { userRole, userStatus } from 'generated/prisma';
+import { RoleGuard } from 'src/guard/role.guard';
+import { Role } from 'src/decorators/role.guard';
+import { GuardGuard } from 'src/guard/guard.guard';
 
 @ApiTags('Tools')
 @Controller('tools')
@@ -11,6 +14,10 @@ export class ToolsController {
   constructor(private readonly toolsService: ToolsService) {}
 
   @Post()
+  @UseGuards(RoleGuard)
+  @Role("ADMIN")
+  @UseGuards(GuardGuard)
+  @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'Create a new tool' })
   @ApiBody({type:CreateToolDto})
   create(@Body() createToolDto: CreateToolDto) {
@@ -24,25 +31,26 @@ export class ToolsController {
 @ApiQuery({ name: 'limit', required: false, type: Number, example: 10 })
 @ApiQuery({ name: 'search', required: false, type: String, example: 'John' })
 @ApiQuery({ name: 'price', required: false, type: Number, example: 2023 })
-@ApiQuery({ name: 'capacityId', required: false, type: String, example: "" })
-@ApiQuery({ name: 'sizeId', required: false, type: String, example: "" })
-@ApiQuery({ name: 'brandId', required: false, type: String, example: "" })
   findAll(@Query() query:{page:string,limit:string,search:string}) {
     let page = Number(query.page)||1
     let limit = Number(query.limit)||10
     let search = query.search||""
-    
     return this.toolsService.findAll(page,limit,search);
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get tool by ID' })
   @ApiParam({ name: 'id', type: 'string', description: 'Tool ID' })
+
   findOne(@Param('id') id: string) {
     return this.toolsService.findOne(id);
   }
 
   @Patch(':id')
+  @UseGuards(RoleGuard)
+  @Role("ADMIN","SUPER_ADMIN")
+  @UseGuards(GuardGuard)
+  @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'Update tool by ID' })
   @ApiBody({
     schema: {
@@ -70,6 +78,10 @@ export class ToolsController {
   }
 
   @Delete(':id')
+  @UseGuards(RoleGuard)
+  @Role("ADMIN")
+  @UseGuards(GuardGuard)
+  @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'Delete tool by ID' })
   @ApiParam({ name: 'id', type: 'string', description: 'Tool ID' })
   remove(@Param('id') id: string) {

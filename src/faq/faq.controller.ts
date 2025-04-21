@@ -1,8 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { FaqService } from './faq.service';
 import { CreateFaqDto } from './dto/create-faq.dto';
 import { UpdateFaqDto } from './dto/update-faq.dto';
-import { ApiOperation, ApiBody, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiBody, ApiTags, ApiBearerAuth } from '@nestjs/swagger';
+import { RoleGuard } from 'src/guard/role.guard';
+import { Role } from 'src/decorators/role.guard';
+import { GuardGuard } from 'src/guard/guard.guard';
 
 @ApiTags('FAQ')
 @Controller('faq')
@@ -10,6 +13,10 @@ export class FaqController {
   constructor(private readonly faqService: FaqService) {}
 
   @Post()
+  @UseGuards(RoleGuard)
+  @Role("ADMIN")
+  @UseGuards(GuardGuard)
+  @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'Create a new FAQ' })
   @ApiBody({type:CreateFaqDto})
   create(@Body() createFaqDto: CreateFaqDto) {
@@ -29,6 +36,10 @@ export class FaqController {
   }
 
   @Patch(':id')
+  @UseGuards(RoleGuard)
+  @Role("ADMIN","SUPER_ADMIN")
+  @UseGuards(GuardGuard)
+  @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'Update FAQ by ID' })
   @ApiBody({
     schema: {
@@ -45,6 +56,10 @@ export class FaqController {
   }
 
   @Delete(':id')
+  @UseGuards(RoleGuard)
+  @Role("ADMIN")
+  @UseGuards(GuardGuard)
+  @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'Delete FAQ by ID' })
   remove(@Param('id') id: string) {
     return this.faqService.remove(id);

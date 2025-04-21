@@ -1,8 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards } from '@nestjs/common';
 import { ShowcaseService } from './showcase.service';
 import { CreateShowcaseDto } from './dto/create-showcase.dto';
 import { UpdateShowcaseDto } from './dto/update-showcase.dto';
-import { ApiOperation, ApiTags, ApiBody, ApiParam } from '@nestjs/swagger';
+import { ApiOperation, ApiTags, ApiBody, ApiParam, ApiBearerAuth } from '@nestjs/swagger';
+import { RoleGuard } from 'src/guard/role.guard';
+import { Role } from 'src/decorators/role.guard';
+import { GuardGuard } from 'src/guard/guard.guard';
 
 @ApiTags('Showcases')
 @Controller('showcase')
@@ -10,6 +13,10 @@ export class ShowcaseController {
   constructor(private readonly showcaseService: ShowcaseService) {}
 
   @Post()
+  @UseGuards(RoleGuard)
+  @Role("ADMIN")
+  @UseGuards(GuardGuard)
+  @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'Create a new showcase' })
   @ApiBody({type:CreateShowcaseDto})
   create(@Body() createShowcaseDto: CreateShowcaseDto) {
@@ -33,6 +40,10 @@ export class ShowcaseController {
   }
 
   @Patch(':id')
+  @UseGuards(RoleGuard)
+  @Role("ADMIN","SUPER_ADMIN")
+  @UseGuards(GuardGuard)
+  @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'Update showcase by ID' })
   @ApiBody({
     schema: {
@@ -54,6 +65,10 @@ export class ShowcaseController {
   }
 
   @Delete(':id')
+  @UseGuards(RoleGuard)
+  @Role("ADMIN")
+  @UseGuards(GuardGuard)
+  @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'Delete showcase by ID' })
   @ApiParam({ name: 'id', type: 'string', description: 'Showcase ID' })
   remove(@Param('id') id: string) {

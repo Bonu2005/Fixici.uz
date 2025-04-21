@@ -1,8 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards } from '@nestjs/common';
 import { CapacityService } from './capacity.service';
-import { ApiBody, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UpdateCapacityDto } from './dto/update-capacity.dto';
 import { CreateCapacityDto } from './dto/create-capacity.dto';
+import { RoleGuard } from 'src/guard/role.guard';
+import { Role } from 'src/decorators/role.guard';
+import { GuardGuard } from 'src/guard/guard.guard';
 
 @ApiTags('Capacity')
 @Controller('capacity')
@@ -10,6 +13,10 @@ export class CapacityController {
   constructor(private readonly capacityService: CapacityService) {}
 
   @Post()
+  @UseGuards(RoleGuard)
+  @Role("ADMIN")
+  @UseGuards(GuardGuard)
+   @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'Create a new capacity' })
   @ApiBody({type:CreateCapacityDto})
   create(@Body() createCapacityDto: CreateCapacityDto) {
@@ -37,6 +44,10 @@ export class CapacityController {
   }
 
   @Patch(':id')
+  @UseGuards(RoleGuard)
+  @Role("ADMIN","SUPER_ADMIN")
+  @UseGuards(GuardGuard)
+  @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'Update capacity by ID' })
   @ApiBody({
     schema: {
@@ -54,6 +65,10 @@ export class CapacityController {
   }
 
   @Delete(':id')
+  @UseGuards(RoleGuard)
+  @Role("ADMIN")
+  @UseGuards(GuardGuard)
+  @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'Delete capacity by ID' })
   remove(@Param('id') id: string) {
     return this.capacityService.remove(id);

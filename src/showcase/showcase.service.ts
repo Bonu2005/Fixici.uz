@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreateShowcaseDto } from './dto/create-showcase.dto';
 import { UpdateShowcaseDto } from './dto/update-showcase.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -11,7 +11,7 @@ export class ShowcaseService {
       let created = await this.prisma.showCase.create({ data: createShowcaseDto })
       return created
     } catch (error) {
-      throw new InternalServerErrorException()
+      throw new BadRequestException(error)
     }
   }
 
@@ -33,7 +33,7 @@ export class ShowcaseService {
       })
       return find
     } catch (error) {
-      throw new InternalServerErrorException()
+      throw new BadRequestException(error)
     }
   }
 
@@ -44,7 +44,7 @@ export class ShowcaseService {
         return { message: "No data found with this id" }
       }
     } catch (error) {
-      throw new InternalServerErrorException()
+      throw new BadRequestException(error)
     }
   }
   
@@ -57,7 +57,7 @@ export class ShowcaseService {
       let updated = await this.prisma.showCase.update({ where: { id }, data: updateShowcaseDto })
       return updated
     } catch (error) {
-      throw new InternalServerErrorException()
+      throw new BadRequestException(error)
     }
   }
 
@@ -70,7 +70,7 @@ export class ShowcaseService {
       let updated = await this.prisma.showCase.delete({ where: { id } })
       return updated
     } catch (error) {
-      throw new InternalServerErrorException()
+      throw new BadRequestException(error)
     }
   }
 }

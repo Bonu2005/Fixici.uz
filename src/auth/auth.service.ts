@@ -1,11 +1,12 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import { CreateAuthDto, LoginAuthDto } from './dto/create-auth.dto';
+import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { AdminAuthDto, CreateAuthDto, LoginAuthDto } from './dto/create-auth.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from "bcrypt"
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { totp } from 'otplib';
 import { Request } from 'express';
+
 @Injectable()
 export class AuthService {
   constructor(private prisma:PrismaService,private jwt:JwtService,private configService:ConfigService){}
@@ -28,9 +29,33 @@ export class AuthService {
     return {message:"Successfully registered"}
     
   } catch (error) {
-    throw new InternalServerErrorException()
+    throw new BadRequestException(error)
   }
   }
+
+  async registerAdmin(createAuthDto: AdminAuthDto) {
+    try {
+      let {password ,phoneNumber,role,regionId} =createAuthDto
+      if(role!="ADMIN" && role!="SUPER_ADMIN" && role != "VIEWER_ADMIN"){
+          return {message:"This register only for ADMINS"}
+      }
+      let find = await  this.prisma.user.findFirst({where:{phoneNumber}})
+      if(find){
+       return {message:"Already exists this phoneNumber "}
+      }
+      let region = await this.prisma.region.findFirst({where:{id:regionId}})
+      if(!region){
+        return {message:"No region with this Id"}
+      }
+      let hash = bcrypt.hashSync(password,10)
+      let created  = await this.prisma.user.create({data:{...createAuthDto,password:hash,phoneNumber,role,status:"ACTIVE"}})
+      return {message:"Successfully registered"}
+      
+    } catch (error) {
+      throw new BadRequestException(error)
+    }
+    }
+  
 
  async login(loginAUthDto:LoginAuthDto,req:Request) {
 
@@ -50,17 +75,41 @@ export class AuthService {
     }
     return {accessToken:this.generateAccessToken({id:find.id,role:find.role}),refreshToken:this.generateRefreshToken({id:find.id,role:find.role})}
    } catch (error) {
-    throw new  InternalServerErrorException()
+    throw new  BadRequestException(error)
    }
   }
+ async me(req:Request){
+    try {
+      let {id} = req["user"]
+      return await this.prisma.session.findMany({where:{userId:id}})
+    } catch (error) {
+      throw new BadRequestException(error)
+    }
+  }
 
+  async myOrders(req:Request){
+    try {
+      let {id} = req["user"]
+      return await this.prisma.order.findMany({where:{userId:id}})
+    } catch (error) {
+      throw new BadRequestException(error)
+    }
+  }
+  async myBasket(req:Request){
+    try {
+      let {id} = req["user"]
+      return await this.prisma.basket.findMany({where:{userId:id}})
+    } catch (error) {
+      throw new BadRequestException(error)
+    }
+  }
   sendOtp(phoneNumber:string) {
     try {
       let otp = totp.generate(`${phoneNumber}${this.configService.get<string>("otpSecret")}`)
       return otp
       
     } catch (error) {
-      throw new InternalServerErrorException()
+      throw new BadRequestException(error)
     }
   }
 
@@ -71,7 +120,7 @@ export class AuthService {
       return {message:"Wrong otp"}
     }
    } catch (error) {
-    throw new InternalServerErrorException()
+    throw new BadRequestException(error)
    }
   }
   
@@ -80,7 +129,7 @@ export class AuthService {
     let {id ,role } = req["user"]
     return {accessToken:this.generateAccessToken({id,role}),refreshToken:this.generateRefreshToken({id,role})}
    } catch (error) {
-    throw new InternalServerErrorException()
+    throw new BadRequestException(error)
    }
   }
  async resetpassword(password:string,req:Request){
@@ -88,7 +137,7 @@ export class AuthService {
       let {id}= req["user"]
      let update = await this.prisma.user.update({where:{id},data:{password}})
     } catch (error) {
-      throw new InternalServerErrorException()
+      throw new BadRequestException(error)
     }
   }
 
@@ -103,7 +152,7 @@ export class AuthService {
       let otp = totp.generate(`${find.phoneNumber}${this.configService.get<string>("otpSecret")}`)
       return otp
     } catch (error) {
-      throw new InternalServerErrorException()
+      throw new BadRequestException(error)
     }
   }
 
@@ -120,7 +169,7 @@ export class AuthService {
     }
     return {message:"Otp successfully verifyed"}
    } catch (error) {
-    throw new InternalServerErrorException()
+    throw new BadRequestException(error)
    }
   }
   
@@ -128,14 +177,14 @@ export class AuthService {
   try {
     return this.jwt.sign(payload,{secret:this.configService.get<string>('accessSecret'),expiresIn:"1h"})
   } catch (error) {
-    throw new InternalServerErrorException()
+    throw new BadRequestException(error)
   }
   }
   generateRefreshToken(payload:any){
     try {
       return this.jwt.sign(payload,{secret:this.configService.get<string>('refreshSecret'),expiresIn:"7d"})
     } catch (error) {
-      throw new InternalServerErrorException()
+      throw new BadRequestException(error)
     }
     }
 }

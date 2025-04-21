@@ -1,13 +1,20 @@
-import { Controller, Get, Post, Body, Patch, Param, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Query, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ApiOperation, ApiTags, ApiBody, ApiParam } from '@nestjs/swagger';
+import { ApiOperation, ApiTags, ApiBody, ApiParam, ApiBearerAuth } from '@nestjs/swagger';
+import { RoleGuard } from 'src/guard/role.guard';
+import { GuardGuard } from 'src/guard/guard.guard';
+import { Role } from 'src/decorators/role.guard';
 
 @ApiTags('Users')
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
   @Get()
+  @UseGuards(RoleGuard)
+  @Role("ADMIN","VIEWER_ADMIN")
+  @UseGuards(GuardGuard)
+  @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'Get all users' })
   findAll(@Query() query:{page:string,limit:string,search:string}) {
     let page = Number(query.page)||1
@@ -17,6 +24,10 @@ export class UserController {
   }
 
   @Get(':id')
+  @UseGuards(RoleGuard)
+  @Role("ADMIN","VIEWER_ADMIN")
+  @UseGuards(GuardGuard)
+  @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'Get user by ID' })
   @ApiParam({ name: 'id', type: 'string', description: 'User ID' })
   findOne(@Param('id') id: string) {
@@ -24,6 +35,10 @@ export class UserController {
   }
 
   @Patch(':id')
+  @UseGuards(RoleGuard)
+  @Role("ADMIN")
+  @UseGuards(GuardGuard)
+  @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'Update user by ID' })
   @ApiParam({ name: 'id', type: 'string', description: 'User ID' })
   @ApiBody({

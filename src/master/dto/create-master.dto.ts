@@ -50,6 +50,13 @@ export class CreateMasterDto {
 }
 
 export class MasterFilterDto{
-    year:number
-    isActive:boolean
+  page:number
+  limit:number
+  phone:string
+  search:string
+  fullName:string
+  year:number
+  maxYear:number
+  minYear:number
+  isActive:boolean
 }

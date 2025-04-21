@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreatePartnerDto } from './dto/create-partner.dto';
 import { UpdatePartnerDto } from './dto/update-partner.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -11,7 +11,7 @@ async create(createPartnerDto: CreatePartnerDto) {
     let created = await this.prisma.partners.create({data:createPartnerDto})
     return created
    } catch (error) {
-    throw new InternalServerErrorException()
+    throw new BadRequestException(error)
    }
   }
 
@@ -27,7 +27,7 @@ async create(createPartnerDto: CreatePartnerDto) {
     skip,take:limit})
       return find
     } catch (error) {
-      throw new InternalServerErrorException()
+      throw new BadRequestException(error)
     }
   }
 
@@ -38,7 +38,7 @@ async create(createPartnerDto: CreatePartnerDto) {
        return {message:"No data found with this id"}
       }
     } catch (error) {
-     throw new InternalServerErrorException()
+     throw new BadRequestException(error)
     }
    }
  async update(id: string, updatePartnerDto: UpdatePartnerDto) {
@@ -50,7 +50,7 @@ async create(createPartnerDto: CreatePartnerDto) {
       let updated = await this.prisma.partners.update({where:{id},data:updatePartnerDto})
       return updated
     } catch (error) {
-     throw new InternalServerErrorException()
+     throw new BadRequestException(error)
     }
   }
   async  remove(id: string) {
@@ -62,7 +62,7 @@ async create(createPartnerDto: CreatePartnerDto) {
       let updated = await this.prisma.partners.delete({where:{id}})
       return updated
     } catch (error) {
-     throw new InternalServerErrorException()
+     throw new BadRequestException(error)
     }
   }
 }

@@ -5,13 +5,13 @@ export class CreateOrderProductDto {
     // @ApiProperty({ example: 'order-uuid-123', description: 'ID заказа (можно не указывать при создании)' })
     // orderId: string;
   
-    @ApiProperty({ example: '4304f645-4cac-4e11-bb38-7bc3392910e8', description: 'ID продукта' })
+    @ApiProperty({ example: '24298a6a-b6db-41eb-8dd1-02ad6f2121dd', description: 'ID продукта' })
     productId: string;
   
-    @ApiProperty({ example: '2a4f3ed1-db72-4c98-ab4c-576cb3e71112', description: 'ID уровня' })
+    @ApiProperty({ example: 'ae148de7-add4-4231-ac51-35cefa8651a2', description: 'ID уровня' })
     levelId: string;
   
-    @ApiProperty({ example: '02f84bfd-6633-4ee5-a6f5-e669ff274624', description: 'ID инструмента' })
+    @ApiProperty({ example: '8f241c56-201c-45ed-8f11-fe2cddb66a03', description: 'ID инструмента' })
     toolId: string;
   
     @ApiProperty({ example: 2, description: 'Количество' })
@@ -72,7 +72,16 @@ export class CreateOrderDto {
     orderProduct: CreateOrderProductDto[];
   }
 export class OrderFilter {
+    page:string
+    limit:string
+    search:string
     date:Date
     total:number
     status:orderStatus
+    paymentType:paymentType
+    withDelivery: boolean;
+    lteTotal:string
+    gteTotal:string
+    lteDate:string
+    gteDate:string
 }

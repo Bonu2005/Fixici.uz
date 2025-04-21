@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreateContactDto } from './dto/create-contact.dto';
 import { UpdateContactDto } from './dto/update-contact.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -11,7 +11,7 @@ export class ContactService {
       let created = await this.prisma.contact.create({ data: createContactDto })
       return created
     } catch (error) {
-      throw new InternalServerErrorException()
+      throw new BadRequestException(error)
     }
   }
 
@@ -33,7 +33,7 @@ export class ContactService {
       })
       return find
     } catch (error) {
-      throw new InternalServerErrorException()
+      throw new BadRequestException(error)
     }
   }
   async findOne(id: string) {
@@ -43,7 +43,7 @@ export class ContactService {
         return { message: "No data found with this id" }
       }
     } catch (error) {
-      throw new InternalServerErrorException()
+      throw new BadRequestException(error)
     }
   }
   async update(id: string, updateContactDto: UpdateContactDto) {
@@ -55,7 +55,7 @@ export class ContactService {
       let updated = await this.prisma.contact.update({ where: { id }, data: updateContactDto })
       return updated
     } catch (error) {
-      throw new InternalServerErrorException()
+      throw new BadRequestException(error)
     }
   }
 
@@ -68,7 +68,7 @@ export class ContactService {
       let updated = await this.prisma.contact.delete({ where: { id } })
       return updated
     } catch (error) {
-      throw new InternalServerErrorException()
+      throw new BadRequestException(error)
     }
   }
 }

@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreateGeneralInfoDto } from './dto/create-general-info.dto';
 import { UpdateGeneralInfoDto } from './dto/update-general-info.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -11,7 +11,7 @@ export class GeneralInfoService {
      let created = await this.prisma.generalInfo.create({data:createGeneralInfoDto})
      return created
     } catch (error) {
-     throw new InternalServerErrorException()
+     throw new BadRequestException(error)
     }
    }
 
@@ -20,7 +20,7 @@ export class GeneralInfoService {
       let find = await this.prisma.generalInfo.findMany()
       return find
     } catch (error) {
-      throw new InternalServerErrorException()
+      throw new BadRequestException(error)
     }
   }
 
@@ -31,7 +31,7 @@ export class GeneralInfoService {
        return {message:"No data found with this id"}
       }
     } catch (error) {
-     throw new InternalServerErrorException()
+     throw new BadRequestException(error)
     }
    }
 
@@ -44,7 +44,7 @@ export class GeneralInfoService {
       let updated = await this.prisma.generalInfo.update({where:{id},data:updateGeneralInfoDto})
       return updated
     } catch (error) {
-     throw new InternalServerErrorException()
+     throw new BadRequestException(error)
     }
   }
 
@@ -57,7 +57,7 @@ export class GeneralInfoService {
       let updated = await this.prisma.generalInfo.delete({where:{id}})
       return updated
     } catch (error) {
-     throw new InternalServerErrorException()
+     throw new BadRequestException(error)
     }
   }
 }

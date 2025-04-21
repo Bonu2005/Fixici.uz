@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreateToolDto, ToolFilterDto } from './dto/create-tool.dto';
 import { UpdateToolDto } from './dto/update-tool.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -18,7 +18,7 @@ export class ToolsService {
       let created = await this.prisma.tools.create({ data: { ...createToolDto, isActive: true } })
       return created
     } catch (error) {
-      throw new InternalServerErrorException()
+      throw new BadRequestException(error)
     }
   }
   async findAll(page: number, limit: number, search: string) {
@@ -45,7 +45,7 @@ export class ToolsService {
       })
       return find
     } catch (error) {
-      throw new InternalServerErrorException()
+      throw new BadRequestException(error)
     }
   }
   async findOne(id: string) {
@@ -56,7 +56,7 @@ export class ToolsService {
       }
       return find
     } catch (error) {
-      throw new InternalServerErrorException()
+      throw new BadRequestException(error)
     }
   }
 
@@ -78,7 +78,7 @@ export class ToolsService {
       }
       await this.prisma.basket.deleteMany({where:{toolId:id}})
     } catch (error) {
-      throw new InternalServerErrorException()
+      throw new BadRequestException(error)
     }
   }
 
@@ -92,7 +92,7 @@ export class ToolsService {
       let updated = await this.prisma.tools.delete({ where: { id } })
       return updated
     } catch (error) {
-      throw new InternalServerErrorException()
+      throw new BadRequestException(error)
     }
   }
 }

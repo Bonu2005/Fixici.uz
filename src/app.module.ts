@@ -26,11 +26,12 @@ import { UploadsModule } from './uploads/uploads.module';
 import { join } from 'path';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { ConfigService } from '@nestjs/config';
+import { TelegrafService } from './telegraf/telegraf.service';
 
 @Module({
   imports: [AuthModule, RegionModule, BrandModule, CapacityModule, SizeModule, LevelModule, UserModule, ToolsModule, ProductModule, MasterModule, OrderModule, CommentModule, BasketModule, GeneralInfoModule, ContactModule, FaqModule, ShowcaseModule, PartnersModule, PrismaModule, EskizModule, UploadsModule,ServeStaticModule.forRoot({rootPath:join(__dirname,"..","uploads"),serveRoot:'/file'})],
   controllers: [AppController],
-  providers: [AppService, ConfigService],
+  providers: [AppService, ConfigService, TelegrafService],
   exports:[ ConfigService]
 })
 export class AppModule {}
